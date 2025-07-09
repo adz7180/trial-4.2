@@ -1,143 +1,124 @@
 <template>
-  <div id="scene-viewer">
-    <canvas ref="rendererCanvas"></canvas>
-    <div v-if="loading" class="loading-overlay">Loading your dream home...</div>
-  </div>
+  <div ref="container" class="scene-container"></div>
 </template>
-
 <script>
-import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
-import { SSAOPass } from 'three/examples/jsm/postprocessing/SSAOPass.js'
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 
 export default {
-  name: 'SceneViewer',
   props: ['modelUrl'],
-  data() {
-    return {
-      scene: null,
-      camera: null,
-      renderer: null,
-      controls: null,
-      composer: null,
-      loading: true
-    }
-  },
-  watch: {
-    modelUrl(newVal) {
-      if (newVal) {
-        this.loadModel(newVal);
-      }
-    }
-  },
   mounted() {
-    this.init3DScene();
-    window.addEventListener('resize', this.onWindowResize);
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.onWindowResize);
-    if (this.renderer) this.renderer.dispose();
+    this.initScene();
+    this.$root.$on('set-material', this.applyMaterialChange);
+    if (this.modelUrl) this.loadModel(this.modelUrl);
   },
   methods: {
-    init3DScene() {
-      const width = this.$refs.rendererCanvas.clientWidth;
-      const height = this.$refs.rendererCanvas.clientHeight;
-
-      this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(0xf0f0f0);
-
-      this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-      this.camera.position.set(5, 4, 5);
-
-      this.renderer = new THREE.WebGLRenderer({ canvas: this.$refs.rendererCanvas, antialias: true });
-      this.renderer.setSize(width, height);
+    initScene() {
+      // Renderer
+      this.renderer = new THREE.WebGLRenderer({ antialias:true });
+      this.renderer.setSize(this.$refs.container.clientWidth, this.$refs.container.clientHeight);
       this.renderer.outputEncoding = THREE.sRGBEncoding;
       this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.5;
+      this.renderer.toneMappingExposure = 1.0;
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.physicallyCorrectLights = true;
+      this.$refs.container.appendChild(this.renderer.domElement);
 
+      // Scene & Camera
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(
+        75,
+        this.$refs.container.clientWidth/this.$refs.container.clientHeight,
+        0.1, 1000
+      );
+      this.camera.position.set(0,2,5);
+
+      // HDRI Environment
+      new RGBELoader().setDataType(THREE.UnsignedByteType)
+        .load('/hdr/environment.hdr', tex => {
+          const pmrem = new THREE.PMREMGenerator(this.renderer);
+          this.scene.environment = pmrem.fromEquirectangular(tex).texture;
+          this.scene.environment.rotation = Math.PI/4;
+          tex.dispose(); pmrem.dispose();
+        });
+
+      // Controls
       this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.enableDamping = true;
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-      directionalLight.position.set(5, 10, 7.5);
-      this.scene.add(ambientLight);
-      this.scene.add(directionalLight);
-
-      const floorGeometry = new THREE.PlaneGeometry(50, 50);
-      const floorMaterial = new THREE.MeshStandardMaterial({ color: 0xeeeeee, roughness: 0.4, metalness: 0.2 });
-      const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-      floor.rotation.x = -Math.PI / 2;
-      floor.position.y = -0.001;
-      floor.receiveShadow = true;
-      this.scene.add(floor);
-
-      const renderPass = new RenderPass(this.scene, this.camera);
-      const bloomPass = new UnrealBloomPass(new THREE.Vector2(width, height), 1.2, 0.4, 0.85);
-      const ssaoPass = new SSAOPass(this.scene, this.camera, width, height);
-      ssaoPass.kernelRadius = 16;
-
+      // Post-Processing
       this.composer = new EffectComposer(this.renderer);
-      this.composer.addPass(renderPass);
-      this.composer.addPass(bloomPass);
-      this.composer.addPass(ssaoPass);
+      this.composer.addPass(new RenderPass(this.scene, this.camera));
+      const bloom = new UnrealBloomPass(
+        new THREE.Vector2(this.$refs.container.clientWidth,this.$refs.container.clientHeight),
+        1.2, 0.4, 0.9
+      );
+      this.composer.addPass(bloom);
 
       this.animate();
     },
     loadModel(url) {
       const loader = new GLTFLoader();
-      loader.load(url, (gltf) => {
-        this.scene.add(gltf.scene);
-        this.loading = false;
-      }, undefined, (error) => {
-        console.error(error);
+      const draco = new DRACOLoader();
+      draco.setDecoderPath('/draco/');
+      loader.setDRACOLoader(draco);
+
+      loader.load(url, gltf => {
+        if (this.model) this.scene.remove(this.model);
+        this.model = gltf.scene;
+        this.meshes = [];
+
+        this.model.traverse(obj => {
+          if (obj.isMesh && obj.metadata && obj.metadata.textureMaps) {
+            const maps = obj.metadata.textureMaps;
+            const mat = new THREE.MeshStandardMaterial();
+            ['diffuse','normal','roughness','ao'].forEach(type => {
+              const tex = new THREE.TextureLoader().load(maps[type]);
+              tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+              tex.repeat.set(1,1);
+              tex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
+              if(type==='diffuse') tex.encoding = THREE.sRGBEncoding;
+              mat[type+'Map'] = tex;
+            });
+            obj.material = mat;
+            this.meshes.push(obj);
+          }
+        });
+
+        const parts = this.meshes.map((m,i)=>({
+          index:i, type:m.metadata.type, material:m.metadata.material
+        }));
+        this.$root.$emit('model-loaded', parts);
+        this.scene.add(this.model);
+      });
+    },
+    applyMaterialChange({ category, material }) {
+      const target = category.replace(/s$/, '');
+      this.meshes.forEach(mesh => {
+        if(mesh.metadata.type === target) {
+          const maps = mesh.metadata.textureMaps;
+          ['diffuse','normal','roughness','ao'].forEach(type => {
+            const path = maps[type].replace(/\/[^\/]+\//, `/textures/${material}/`);
+            mesh.material[type+'Map'] = new THREE.TextureLoader().load(path);
+          });
+          mesh.material.needsUpdate = true;
+        }
       });
     },
     animate() {
       requestAnimationFrame(this.animate);
       this.controls.update();
       this.composer.render();
-    },
-    onWindowResize() {
-      const width = this.$refs.rendererCanvas.clientWidth;
-      const height = this.$refs.rendererCanvas.clientHeight;
-
-      this.camera.aspect = width / height;
-      this.camera.updateProjectionMatrix();
-      this.renderer.setSize(width, height);
-      this.composer.setSize(width, height);
     }
   }
-}
+};
 </script>
-
 <style scoped>
-#scene-viewer {
-  width: 100%;
-  height: 500px;
-  position: relative;
-}
-
-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255,255,255,0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.2rem;
-}
+.scene-container { width:100%; height:100%; background:#000; }
 </style>
-
