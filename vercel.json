@@ -2,17 +2,44 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/scan/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "memory": 1024,
+        "maxDuration": 10
+      }
+    },
+    {
+      "src": "api/scan/process_blueprint.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.9",
+        "memory": 2048,
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
-  "functions": {
-    "api/scan/index.js": { "runtime": "nodejs18.x" },
-    "api/scan/process_blueprint.py": { "runtime": "python3.9" }
-  },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)",     "destination": "/index.html" }
+  "routes": [
+    {
+      "src": "/api/scan",
+      "methods": ["POST"],
+      "dest": "api/scan/index.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "api/scan/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }
+
