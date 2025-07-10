@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import SceneViewer from '@/scenes/SceneViewer.vue';
+import SceneViewer from '@/components/SceneViewer.vue';
 export default {
   name: 'Scan',
   components: { SceneViewer },
