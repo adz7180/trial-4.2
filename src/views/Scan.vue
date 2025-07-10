@@ -19,27 +19,48 @@
 
 <script>
 import SceneViewer from '@/components/SceneViewer.vue';
+
 export default {
   name: 'Scan',
   components: { SceneViewer },
-  data() { return { modelUrl: null, suggestions: [] }; },
+  data() {
+    return {
+      modelUrl: null,
+      suggestions: []
+    };
+  },
   methods: {
     async upload(e) {
       const file = e.target.files[0];
       if (!file) return;
-      const form = new FormData();
-      form.append('file', file);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
       try {
-        const res = await fetch('/api/scan', { method:'POST', body: form });
-        const data = await res.json();
+        const response = await fetch('/api/scan', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('API Error:', response.status, text);
+          alert(`Scan failed with status ${response.status}`);
+          return;
+        }
+
+        const data = await response.json();
         if (data.success) {
           this.modelUrl = data.modelPath;
           this.suggestions = data.suggestions;
         } else {
+          console.error('Scan failed (server):', data);
           alert('Scan failed.');
         }
-      } catch {
-        alert('Upload error.');
+      } catch (err) {
+        console.error('Upload error:', err);
+        alert('Upload error. See console for details.');
       }
     }
   }
@@ -47,8 +68,8 @@ export default {
 </script>
 
 <style scoped>
-.scan { padding:40px; text-align:center; }
-.upload-area { margin:20px auto; }
-.viewer { margin-top:40px; width:100%; height:600px; }
-.suggestions { margin-top:20px; display:inline-block; text-align:left; }
+.scan { padding: 40px; text-align: center; }
+.upload-area { margin: 20px auto; }
+.viewer { margin-top: 40px; width: 100%; height: 600px; }
+.suggestions { margin-top: 20px; display: inline-block; text-align: left; }
 </style>
