@@ -1,17 +1,12 @@
 {
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
+  "functions": {
+    "api/scan/index.js": { "runtime": "nodejs18.x" },
+    "api/scan/process_blueprint.py": { "runtime": "python3.9" }
+  },
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    // 1) Let all /api/* calls go to the serverless functions
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    // 2) Rewrite everything else to index.html for your SPA
+    { "source": "/(.*)",    "destination": "/index.html" }
   ]
 }
