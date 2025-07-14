@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys, traceback
+import json
 import cv2, numpy as np, fitz, torch, torchvision
 from torchvision.transforms import functional as F
 from shapely.geometry import Polygon
@@ -63,7 +64,8 @@ def process_blueprint(file_path, output_glb_path):
         image = cv2.resize(image, (1024,1024))
         objs, sugg = detect_objects(image, file_path)
         convert_to_glb_from_geometry(objs, output_glb_path)
-        print({'suggestions': sugg})
+        # Output valid JSON
+        print(json.dumps({'suggestions': sugg}))
         return 0
     except Exception:
         traceback.print_exc()
