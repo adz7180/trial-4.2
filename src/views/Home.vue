@@ -1,46 +1,102 @@
 <template>
-  <div class="home">
+  <div class="home-page font-sans text-white bg-gray-900">
     <!-- Navbar -->
-    <nav class="navbar">
-      <img src="@/assets/logo.png" class="logo" />
-      <ul class="nav-links">
-        <li><router-link to="/scan">Scan to 3D</router-link></li>
-        <li><router-link to="/customize">Customize</router-link></li>
-        <li><router-link to="/public">Explore Public</router-link></li>
+    <nav class="flex items-center justify-between p-6">
+      <div class="text-2xl font-bold">MyHomeApp</div>
+      <ul class="flex space-x-6">
+        <li><a href="/" class="hover:text-blue-400">Home</a></li>
+        <li><a href="/scan" class="hover:text-blue-400">Scan</a></li>
+        <li><a href="/customize" class="hover:text-blue-400">Customize</a></li>
+        <li><a href="/pricing" class="hover:text-blue-400">Pricing</a></li>
+        <li><a href="/products" class="hover:text-blue-400">Products</a></li>
       </ul>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Design Your Dream Home</h1>
-        <p>Scan, customize, and visualize homes in hyper-realistic 3D.</p>
-        <div class="buttons">
-          <router-link to="/scan" class="btn primary">Scan Blueprint</router-link>
-          <router-link to="/customize" class="btn secondary">Start Designing</router-link>
-        </div>
+    <!-- Header Section -->
+    <header class="text-center py-20 px-4">
+      <h1 class="text-5xl font-bold mb-4">Design Your Dream Home in Real-Time</h1>
+      <p class="text-lg text-gray-300 mb-8">Walk through and customize homes with ultra realistic 4K visuals</p>
+      <div class="flex justify-center space-x-4">
+        <button class="w-48 h-12 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold uppercase">Try Free</button>
+        <button class="w-48 h-12 border border-white hover:bg-white hover:text-gray-900 rounded-lg font-bold uppercase bg-transparent">Watch Demo</button>
       </div>
-      <div class="hero-image">
-        <img src="@/assets/hero-preview.png" alt="Hero Preview" />
+    </header>
+
+    <!-- Hero Image Area -->
+    <section class="text-center px-4 mb-20">
+      <div class="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-lg">
+        <img src="/images/hero-living-room.jpg" alt="Modern Living Room" class="w-full h-auto" />
+      </div>
+      <div class="flex justify-center space-x-4 mt-6">
+        <button class="w-48 h-12 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 rounded-lg uppercase">Explore Preview</button>
+        <button class="w-48 h-12 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 rounded-lg uppercase">Enter Studio</button>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features">
-      <div class="feature">
-        <img src="@/assets/scan-icon.png" />
-        <h3>Scan Blueprints</h3>
-        <p>Upload 2D plans and convert them to 3D models instantly.</p>
+    <section class="px-4 mb-20">
+      <h2 class="text-3xl font-bold text-center mb-8">Features</h2>
+      <div class="flex justify-center space-x-12">
+        <div class="flex flex-col items-center">
+          <i class="icon-scan text-blue-400 text-4xl mb-2"></i>
+          <span>Scan Blueprints</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <i class="icon-edit text-blue-400 text-4xl mb-2"></i>
+          <span>Real-Time Editing</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <i class="icon-drag text-blue-400 text-4xl mb-2"></i>
+          <span>Drag & Drop</span>
+        </div>
+        <div class="flex flex-col items-center">
+          <i class="icon-share text-blue-400 text-4xl mb-2"></i>
+          <span>Share to Contractors</span>
+        </div>
       </div>
-      <div class="feature">
-        <img src="@/assets/edit-icon.png" />
-        <h3>Fully Customize</h3>
-        <p>Change floors, walls, furniture, lighting — every detail.</p>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="px-4 mb-20">
+      <h2 class="text-3xl font-bold text-center mb-8">Pricing</h2>
+      <div class="flex justify-center space-x-8">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+          <h3 class="text-xl font-bold mb-4">Monthly</h3>
+          <p class="text-4xl font-bold mb-4">$14.99/mo</p>
+          <ul class="mb-6 space-y-2">
+            <li>4K walkthrough</li>
+            <li>Drag-and-drop</li>
+            <li>Customization</li>
+            <li>Blueprint scanning</li>
+            <li>Share</li>
+          </ul>
+          <button class="w-full h-12 bg-blue-600 hover:bg-blue-500 rounded-lg uppercase font-bold">Get Started</button>
+        </div>
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
+          <h3 class="text-xl font-bold mb-4">Yearly</h3>
+          <p class="text-4xl font-bold mb-4">$179.99/yr</p>
+          <ul class="mb-6 space-y-2">
+            <li>4K walkthrough</li>
+            <li>Drag-and-drop</li>
+            <li>Customization</li>
+            <li>Blueprint scanning</li>
+            <li>Share</li>
+          </ul>
+          <button class="w-full h-12 bg-blue-600 hover:bg-blue-500 rounded-lg uppercase font-bold">Get Started</button>
+        </div>
       </div>
-      <div class="feature">
-        <img src="@/assets/share-icon.png" />
-        <h3>Explore & Share</h3>
-        <p>Publish your designs or explore community builds.</p>
+    </section>
+
+    <!-- Public Products Section -->
+    <section class="px-4 mb-20">
+      <h2 class="text-3xl font-bold text-center mb-8">Public Products</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div v-for="n in 4" :key="n" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+          <img :src="`/images/house${n}.jpg`" alt="Builder {{n}}" class="w-full h-48 object-cover" />
+          <div class="text-center py-4 bg-blue-600">
+            <span class="font-bold">Builder {{ n }}</span>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -48,176 +104,21 @@
 
 <script>
 export default {
-  name: 'Home'
+  name: 'HomePage'
 };
 </script>
 
-<style scoped lang="scss">
-@import '@/assets/global.scss';
-
-body {
-  overflow-x: hidden;
+<style scoped>
+.home-page {
+  background-color: #1C1F2B;
 }
-
-.home {
-  width: 100%;
-  background: linear-gradient(to bottom, #f9fbfd, #e7ebf0);
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 70px;
-  background: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.logo {
-  width: 150px;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 30px;
-}
-
-.nav-links li a {
-  color: #333;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
-}
-
-.nav-links li a:hover {
-  color: #007bff;
-}
-
-/* Hero */
-.hero {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 70px;
-}
-
-.hero-content {
-  max-width: 600px;
-}
-
-.hero-content h1 {
-  font-size: 3.8rem;
-  margin-bottom: 20px;
-  background: linear-gradient(to right, #007bff, #00b7ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.hero-content p {
-  color: #555;
-  font-size: 1.2rem;
-  margin-bottom: 30px;
-}
-
-.hero-content .buttons {
-  display: flex;
-  gap: 20px;
-}
-
-.btn {
-  padding: 14px 30px;
-  border-radius: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-  text-decoration: none;
-}
-
-.primary {
-  background: linear-gradient(135deg, #007bff, #00b7ff);
-  color: white;
-}
-
-.primary:hover {
-  transform: translateY(-4px);
-}
-
-.secondary {
-  background: white;
-  border: 2px solid #007bff;
-  color: #007bff;
-}
-
-.secondary:hover {
-  background: #007bff;
-  color: white;
-  transform: translateY(-4px);
-}
-
-.hero-image img {
-  width: 500px;
-  border-radius: 30px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-}
-
-/* Features */
-.features {
-  display: flex;
-  justify-content: center;
-  gap: 60px;
-  padding: 80px 70px;
-  background: white;
-}
-
-.feature {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 30px;
-  padding: 30px;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-  transition: 0.3s;
-}
-
-.feature:hover {
-  transform: translateY(-5px);
-}
-
-.feature img {
-  width: 60px;
-  margin-bottom: 20px;
-}
-
-.feature h3 {
-  margin-bottom: 12px;
-  background: linear-gradient(to right, #007bff, #00b7ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.feature p {
-  color: #666;
-  font-size: 1rem;
-}
-
-@media (max-width: 1200px) {
-  .hero {
-    flex-direction: column;
-    text-align: center;
-    gap: 50px;
-  }
-
-  .hero-image img {
-    width: 90%;
-  }
-
-  .features {
-    flex-direction: column;
-    align-items: center;
-  }
+.rounded-lg { border-radius: 12px; }
+.icon-scan::before { content: '\f02d'; /* FontAwesome scan icon */ }
+.icon-edit::before { content: '\f044'; }
+.icon-drag::before { content: '\f247'; }
+.icon-share::before { content: '\f1e0'; }
+i[class^="icon-"] {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
 }
 </style>
