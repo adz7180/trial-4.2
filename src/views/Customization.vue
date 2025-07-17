@@ -1,3 +1,4 @@
+<!-- src/views/Customize.vue -->
 <template>
   <div class="customize">
     <!-- Header -->
@@ -21,7 +22,7 @@
     <!-- Loader Overlay -->
     <div v-if="loading" class="loader-overlay">
       <div class="spinner"></div>
-      <p>Generating 4K model… this may take a moment</p>
+      <p>Generating 4K model…</p>
     </div>
 
     <!-- 3D Viewer & Panel -->
@@ -52,6 +53,7 @@ import CustomizationPanel from '@/components/CustomizationPanel.vue';
 const selectedSize = ref('');
 const modelUrl     = ref('');
 const loading      = ref(false);
+const sceneViewer  = ref(null);
 
 const houseSizes = [
   { label: '1500 sq ft', value: '1500' },
@@ -66,26 +68,26 @@ const houseSizes = [
 async function selectSize(size) {
   if (loading.value) return;
   selectedSize.value = size;
-  loading.value = true;
   modelUrl.value = '';
+  loading.value = true;
 
   try {
-    // call your backend endpoint that returns a 4K GLB URL
     const res = await fetch(`/api/generate-model?size=${size}`);
-    if (!res.ok) throw new Error('Model generation failed');
+    if (!res.ok) throw new Error('Generation failed');
     const { url } = await res.json();
     modelUrl.value = url;
   } catch (err) {
     console.error(err);
-    alert('Failed to generate model. Please try again.');
+    alert('Model generation failed. Please try again.');
   } finally {
     loading.value = false;
   }
 }
 
 function applyMaterial(material) {
-  const sv = getCurrentInstance().refs.sceneViewer;
-  if (sv && sv.applyMaterial) sv.applyMaterial(material);
+  if (sceneViewer.value && sceneViewer.value.applyMaterial) {
+    sceneViewer.value.applyMaterial(material);
+  }
 }
 </script>
 
@@ -160,7 +162,7 @@ $bg: #f5f5f7;
 .loader-overlay {
   position: absolute;
   inset: 0;
-  background: rgba($white,0.8);
+  background: rgba($white,0.85);
   display: flex;
   flex-direction: column;
   align-items: center;
