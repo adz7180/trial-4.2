@@ -1,124 +1,118 @@
 <template>
-  <div class="home-page font-sans text-white bg-gray-900">
+  <div class="min-h-screen bg-[#1C1F2B] text-white font-inter">
     <!-- Navbar -->
-    <nav class="flex items-center justify-between p-6">
-      <div class="text-2xl font-bold">MyHomeApp</div>
-      <ul class="flex space-x-6">
-        <li><a href="/" class="hover:text-blue-400">Home</a></li>
-        <li><a href="/scan" class="hover:text-blue-400">Scan</a></li>
-        <li><a href="/customize" class="hover:text-blue-400">Customize</a></li>
-        <li><a href="/pricing" class="hover:text-blue-400">Pricing</a></li>
-        <li><a href="/products" class="hover:text-blue-400">Products</a></li>
+    <nav class="container mx-auto flex items-center justify-between py-6 px-4">
+      <div class="text-2xl font-bold">HomeStyle</div>
+      <ul class="hidden md:flex space-x-8 text-lg">
+        <li><RouterLink to="/" class="hover:text-blue-400 transition">Home</RouterLink></li>
+        <li><RouterLink to="/scan" class="hover:text-blue-400 transition">Scan</RouterLink></li>
+        <li><RouterLink to="/customize" class="hover:text-blue-400 transition">Customize</RouterLink></li>
+        <li><RouterLink to="/pricing" class="hover:text-blue-400 transition">Pricing</RouterLink></li>
+        <li><RouterLink to="/products" class="hover:text-blue-400 transition">Products</RouterLink></li>
       </ul>
+      <div class="md:hidden">
+        <button @click="open = !open">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
     </nav>
-
-    <!-- Header Section -->
-    <header class="text-center py-20 px-4">
-      <h1 class="text-5xl font-bold mb-4">Design Your Dream Home in Real-Time</h1>
-      <p class="text-lg text-gray-300 mb-8">Walk through and customize homes with ultra realistic 4K visuals</p>
-      <div class="flex justify-center space-x-4">
-        <button class="w-48 h-12 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold uppercase">Try Free</button>
-        <button class="w-48 h-12 border border-white hover:bg-white hover:text-gray-900 rounded-lg font-bold uppercase bg-transparent">Watch Demo</button>
+    <!-- Mobile Menu -->
+    <transition name="fade">
+      <div v-if="open" class="md:hidden bg-[#1C1F2B] px-4 pb-4">
+        <ul class="space-y-4">
+          <li><RouterLink to="/" class="block" @click="open=false">Home</RouterLink></li>
+          <li><RouterLink to="/scan" class="block" @click="open=false">Scan</RouterLink></li>
+          <li><RouterLink to="/customize" class="block" @click="open=false">Customize</RouterLink></li>
+          <li><RouterLink to="/pricing" class="block" @click="open=false">Pricing</RouterLink></li>
+          <li><RouterLink to="/products" class="block" @click="open=false">Products</RouterLink></li>
+        </ul>
       </div>
-    </header>
+    </transition>
 
-    <!-- Hero Image Area -->
-    <section class="text-center px-4 mb-20">
-      <div class="max-w-3xl mx-auto rounded-xl overflow-hidden shadow-lg">
-        <img src="/images/hero-living-room.jpg" alt="Modern Living Room" class="w-full h-auto" />
-      </div>
-      <div class="flex justify-center space-x-4 mt-6">
-        <button class="w-48 h-12 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 rounded-lg uppercase">Explore Preview</button>
-        <button class="w-48 h-12 bg-gray-800 bg-opacity-60 hover:bg-opacity-80 rounded-lg uppercase">Enter Studio</button>
+    <!-- Hero -->
+    <section class="text-center py-20 px-4">
+      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4">Design Your Dream Home<br/>in Real-Time</h1>
+      <p class="text-gray-300 text-lg md:text-xl mb-8">Walk through and customize homes with ultra-realistic 4K visuals</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <RouterLink to="/scan" class="w-48 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-semibold uppercase transition text-center">Try Free</RouterLink>
+        <RouterLink to="/demo" class="w-48 py-3 border border-white hover:bg-white hover:text-gray-900 rounded-xl text-white font-semibold uppercase transition text-center">Watch Demo</RouterLink>
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="px-4 mb-20">
-      <h2 class="text-3xl font-bold text-center mb-8">Features</h2>
-      <div class="flex justify-center space-x-12">
-        <div class="flex flex-col items-center">
-          <i class="icon-scan text-blue-400 text-4xl mb-2"></i>
-          <span>Scan Blueprints</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <i class="icon-edit text-blue-400 text-4xl mb-2"></i>
-          <span>Real-Time Editing</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <i class="icon-drag text-blue-400 text-4xl mb-2"></i>
-          <span>Drag & Drop</span>
-        </div>
-        <div class="flex flex-col items-center">
-          <i class="icon-share text-blue-400 text-4xl mb-2"></i>
-          <span>Share to Contractors</span>
+    <!-- Hero Image -->
+    <section class="flex justify-center px-4">
+      <div class="relative max-w-4xl w-full rounded-2xl overflow-hidden bg-white/10 backdrop-blur-lg shadow-xl">
+        <img src="/images/hero-living-room.jpg" alt="Modern Living Room" class="w-full h-auto object-cover" />
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
+          <RouterLink to="/preview" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition">Explore Preview</RouterLink>
+          <RouterLink to="/studio" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition">Enter Studio</RouterLink>
         </div>
       </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section class="px-4 mb-20">
-      <h2 class="text-3xl font-bold text-center mb-8">Pricing</h2>
-      <div class="flex justify-center space-x-8">
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
-          <h3 class="text-xl font-bold mb-4">Monthly</h3>
-          <p class="text-4xl font-bold mb-4">$14.99/mo</p>
-          <ul class="mb-6 space-y-2">
-            <li>4K walkthrough</li>
-            <li>Drag-and-drop</li>
-            <li>Customization</li>
-            <li>Blueprint scanning</li>
-            <li>Share</li>
-          </ul>
-          <button class="w-full h-12 bg-blue-600 hover:bg-blue-500 rounded-lg uppercase font-bold">Get Started</button>
-        </div>
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
-          <h3 class="text-xl font-bold mb-4">Yearly</h3>
-          <p class="text-4xl font-bold mb-4">$179.99/yr</p>
-          <ul class="mb-6 space-y-2">
-            <li>4K walkthrough</li>
-            <li>Drag-and-drop</li>
-            <li>Customization</li>
-            <li>Blueprint scanning</li>
-            <li>Share</li>
-          </ul>
-          <button class="w-full h-12 bg-blue-600 hover:bg-blue-500 rounded-lg uppercase font-bold">Get Started</button>
-        </div>
+    <!-- Features -->
+    <section class="py-20 px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Features</h2>
+      <div class="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-12 text-center">
+        <FeatureCard icon="/icons/scan.svg" label="Scan Blueprints" />
+        <FeatureCard icon="/icons/edit.svg" label="Real-Time Editing" />
+        <FeatureCard icon="/icons/drag.svg" label="Drag & Drop" />
+        <FeatureCard icon="/icons/share.svg" label="Share to Contractors" />
       </div>
     </section>
 
-    <!-- Public Products Section -->
-    <section class="px-4 mb-20">
-      <h2 class="text-3xl font-bold text-center mb-8">Public Products</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-        <div v-for="n in 4" :key="n" class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
-          <img :src="`/images/house${n}.jpg`" alt="Builder {{n}}" class="w-full h-48 object-cover" />
-          <div class="text-center py-4 bg-blue-600">
-            <span class="font-bold">Builder {{ n }}</span>
-          </div>
-        </div>
+    <!-- Pricing -->
+    <section class="py-20 px-4 bg-[#191C2A]">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Pricing</h2>
+      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        <PricingCard
+          title="Monthly"
+          price="$14.99"
+          unit="/mo"
+          features="['4K Walkthrough', 'Drag & Drop', 'Customization', 'Blueprint Scanning', 'Share']"
+        />
+        <PricingCard
+          title="Yearly"
+          price="$179.99"
+          unit="/yr"
+          features="['4K Walkthrough', 'Drag & Drop', 'Customization', 'Blueprint Scanning', 'Share']"
+        />
+      </div>
+    </section>
+
+    <!-- Public Products -->
+    <section class="py-20 px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Public Products</h2>
+      <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+        <ProductCard v-for="n in 4" :key="n" :image="`/images/house${n}.jpg`" :label="`Builder ${n}`" />
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
+import FeatureCard from '@/components/FeatureCard.vue';
+import PricingCard from '@/components/PricingCard.vue';
+import ProductCard from '@/components/ProductCard.vue';
+
 export default {
-  name: 'HomePage'
+  name: 'HomePage',
+  components: { RouterLink, FeatureCard, PricingCard, ProductCard },
+  setup() {
+    const open = ref(false);
+    return { open };
+  }
 };
 </script>
 
 <style scoped>
-.home-page {
-  background-color: #1C1F2B;
-}
-.rounded-lg { border-radius: 12px; }
-.icon-scan::before { content: '\f02d'; /* FontAwesome scan icon */ }
-.icon-edit::before { content: '\f044'; }
-.icon-drag::before { content: '\f247'; }
-.icon-share::before { content: '\f1e0'; }
-i[class^="icon-"] {
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+.font-inter { font-family: 'Inter', sans-serif; }
+.fade-enter-active, .fade-leave-active { transition: opacity .3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
