@@ -1,12 +1,12 @@
 <template>
   <div class="customize">
     <!-- Header -->
-    <div class="header">
+    <header class="header">
       <h1>Customize Your Dream Home</h1>
-      <p>Select a home size to begin full customization in ultra-realistic 3D.</p>
-    </div>
+      <p>Select a home size to begin real‑time customization in hyper‑realistic 4K.</p>
+    </header>
 
-    <!-- House Size Selector -->
+    <!-- Size Selector -->
     <div class="size-selector">
       <button
         v-for="size in houseSizes"
@@ -18,149 +18,210 @@
       </button>
     </div>
 
-    <!-- 3D Viewer and Customization Panel -->
-    <div class="workspace" v-if="modelUrl">
-      <div class="viewer">
-        <SceneViewer ref="sceneViewer" :modelUrl="modelUrl" @set-material="applyMaterial" />
-      </div>
-      <div class="panel">
-        <CustomizationPanel @set-material="applyMaterial" />
-      </div>
+    <!-- Loader Overlay -->
+    <div v-if="loading" class="loader-overlay">
+      <div class="spinner"></div>
+      <p>Generating 4K model… this may take a moment</p>
     </div>
+
+    <!-- 3D Viewer & Panel -->
+    <transition name="fade">
+      <div v-if="modelUrl && !loading" class="workspace">
+        <div class="viewer">
+          <SceneViewer
+            ref="sceneViewer"
+            :modelUrl="modelUrl"
+            :resolution="[3840,2160]"
+            :enablePBR="true"
+            @set-material="applyMaterial"
+          />
+        </div>
+        <aside class="panel">
+          <CustomizationPanel @set-material="applyMaterial" />
+        </aside>
+      </div>
+    </transition>
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import SceneViewer from '@/components/SceneViewer.vue';
 import CustomizationPanel from '@/components/CustomizationPanel.vue';
 
-export default {
-  name: 'Customize',
-  components: {
-    SceneViewer,
-    CustomizationPanel
-  },
-  data() {
-    return {
-      selectedSize: '',
-      modelUrl: '',
-      houseSizes: [
-        { label: '1500 sq ft', value: '1500' },
-        { label: '1800 sq ft', value: '1800' },
-        { label: '2000 sq ft', value: '2000' },
-        { label: '2200 sq ft', value: '2200' },
-        { label: '2400 sq ft', value: '2400' },
-        { label: '3000 sq ft', value: '3000' },
-        { label: '5000 sq ft', value: '5000' }
-      ]
-    };
-  },
-  methods: {
-    selectSize(size) {
-      this.selectedSize = size;
-      this.modelUrl = `/models/house${size}.glb`;
-    },
-    applyMaterial(material) {
-      if (this.$refs.sceneViewer) {
-        this.$refs.sceneViewer.applyMaterial(material);
-      }
-    }
+const selectedSize = ref('');
+const modelUrl     = ref('');
+const loading      = ref(false);
+
+const houseSizes = [
+  { label: '1500 sq ft', value: '1500' },
+  { label: '1800 sq ft', value: '1800' },
+  { label: '2000 sq ft', value: '2000' },
+  { label: '2200 sq ft', value: '2200' },
+  { label: '2400 sq ft', value: '2400' },
+  { label: '3000 sq ft', value: '3000' },
+  { label: '5000 sq ft', value: '5000' }
+];
+
+async function selectSize(size) {
+  if (loading.value) return;
+  selectedSize.value = size;
+  loading.value = true;
+  modelUrl.value = '';
+
+  try {
+    // call your backend endpoint that returns a 4K GLB URL
+    const res = await fetch(`/api/generate-model?size=${size}`);
+    if (!res.ok) throw new Error('Model generation failed');
+    const { url } = await res.json();
+    modelUrl.value = url;
+  } catch (err) {
+    console.error(err);
+    alert('Failed to generate model. Please try again.');
+  } finally {
+    loading.value = false;
   }
-};
+}
+
+function applyMaterial(material) {
+  const sv = getCurrentInstance().refs.sceneViewer;
+  if (sv && sv.applyMaterial) sv.applyMaterial(material);
+}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// Variables
+$white: #fff;
+$dark: #1a1a1a;
+$primary: #007aff;
+$bg: #f5f5f7;
+
+// Base
 .customize {
-  padding: 60px 80px;
-  background: linear-gradient(to bottom, #fdfdfd, #eef1f5);
+  font-family: 'Inter', sans-serif;
+  background: $bg;
   min-height: 100vh;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  padding: 4rem 2rem;
+  position: relative;
+  overflow-x: hidden;
 }
 
+// Header
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 3rem;
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, $primary, lighten($primary,10%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  p {
+    color: darken($dark,20%);
+    font-size: 1.125rem;
+  }
 }
 
-.header h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  background: linear-gradient(to right, #007bff, #00cfff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 10px;
-}
-
-.header p {
-  font-size: 1.2rem;
-  color: #666;
-}
-
+// Size Selector
 .size-selector {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+  gap: 1rem;
+  max-width: 800px;
+  margin: 0 auto 4rem;
 }
 
 .size-btn {
-  background: #ffffff;
-  border: 2px solid #cdd4e0;
-  padding: 12px 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
-}
-
-.size-btn:hover {
-  background: #f0f5fc;
-  transform: translateY(-2px);
-}
-
-.size-btn.active {
-  background: linear-gradient(135deg, #007bff, #00cfff);
-  color: white;
+  background: rgba($white,0.4);
+  backdrop-filter: blur(8px);
   border: none;
-  box-shadow: 0 12px 30px rgba(0, 123, 255, 0.3);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  color: $dark;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba($dark,0.1);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, $primary, lighten($primary,10%));
+    color: $white;
+    box-shadow: 0 12px 30px rgba($primary,0.3);
+  }
 }
 
+// Loader
+.loader-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba($white,0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+
+  .spinner {
+    width: 4rem;
+    height: 4rem;
+    border: 5px solid rgba($primary,0.3);
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  p {
+    margin-top: 1rem;
+    color: $dark;
+    font-weight: 600;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Workspace
 .workspace {
   display: flex;
-  gap: 40px;
+  gap: 2rem;
   align-items: flex-start;
-}
+  max-width: 1440px;
+  margin: 0 auto;
 
-.viewer {
-  flex: 2;
-  background: #fff;
-  border-radius: 30px;
-  padding: 20px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
-}
-
-.panel {
-  flex: 1.2;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 30px;
-  padding: 24px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(25px);
-}
-
-@media (max-width: 1200px) {
-  .workspace {
-    flex-direction: column;
+  .viewer {
+    flex: 2;
+    background: $white;
+    border-radius: 2rem;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba($dark,0.05);
   }
 
-  .viewer,
   .panel {
-    width: 100%;
+    flex: 1;
+    background: rgba($white,0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 2rem;
+    padding: 2rem;
+    box-shadow: 0 15px 35px rgba($dark,0.05);
   }
+}
+
+// Fade
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .workspace { flex-direction: column; }
 }
 </style>
