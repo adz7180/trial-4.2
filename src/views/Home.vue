@@ -1,118 +1,286 @@
 <template>
-  <div class="min-h-screen bg-[#1C1F2B] text-white font-inter">
+  <div class="home">
     <!-- Navbar -->
-    <nav class="container mx-auto flex items-center justify-between py-6 px-4">
-      <div class="text-2xl font-bold">HomeStyle</div>
-      <ul class="hidden md:flex space-x-8 text-lg">
-        <li><RouterLink to="/" class="hover:text-blue-400 transition">Home</RouterLink></li>
-        <li><RouterLink to="/scan" class="hover:text-blue-400 transition">Scan</RouterLink></li>
-        <li><RouterLink to="/customize" class="hover:text-blue-400 transition">Customize</RouterLink></li>
-        <li><RouterLink to="/pricing" class="hover:text-blue-400 transition">Pricing</RouterLink></li>
-        <li><RouterLink to="/products" class="hover:text-blue-400 transition">Products</RouterLink></li>
+    <nav class="navbar">
+      <RouterLink to="/" class="logo">
+        <img src="@/assets/logo.png" alt="HomeStyle" />
+      </RouterLink>
+      <ul class="nav-links">
+        <li><RouterLink to="/scan">Scan to 3D</RouterLink></li>
+        <li><RouterLink to="/customize">Customize</RouterLink></li>
+        <li><RouterLink to="/public">Explore Public</RouterLink></li>
       </ul>
-      <div class="md:hidden">
-        <button @click="open = !open">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
+      <button class="menu-toggle" @click="open = !open">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
     </nav>
-    <!-- Mobile Menu -->
+
+    <!-- Mobile Nav -->
     <transition name="fade">
-      <div v-if="open" class="md:hidden bg-[#1C1F2B] px-4 pb-4">
-        <ul class="space-y-4">
-          <li><RouterLink to="/" class="block" @click="open=false">Home</RouterLink></li>
-          <li><RouterLink to="/scan" class="block" @click="open=false">Scan</RouterLink></li>
-          <li><RouterLink to="/customize" class="block" @click="open=false">Customize</RouterLink></li>
-          <li><RouterLink to="/pricing" class="block" @click="open=false">Pricing</RouterLink></li>
-          <li><RouterLink to="/products" class="block" @click="open=false">Products</RouterLink></li>
-        </ul>
-      </div>
+      <ul v-if="open" class="mobile-links">
+        <li><RouterLink to="/scan" @click="open=false">Scan to 3D</RouterLink></li>
+        <li><RouterLink to="/customize" @click="open=false">Customize</RouterLink></li>
+        <li><RouterLink to="/public" @click="open=false">Explore Public</RouterLink></li>
+      </ul>
     </transition>
 
     <!-- Hero -->
-    <section class="text-center py-20 px-4">
-      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-4">Design Your Dream Home<br/>in Real-Time</h1>
-      <p class="text-gray-300 text-lg md:text-xl mb-8">Walk through and customize homes with ultra-realistic 4K visuals</p>
-      <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <RouterLink to="/scan" class="w-48 py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-semibold uppercase transition text-center">Try Free</RouterLink>
-        <RouterLink to="/demo" class="w-48 py-3 border border-white hover:bg-white hover:text-gray-900 rounded-xl text-white font-semibold uppercase transition text-center">Watch Demo</RouterLink>
-      </div>
-    </section>
-
-    <!-- Hero Image -->
-    <section class="flex justify-center px-4">
-      <div class="relative max-w-4xl w-full rounded-2xl overflow-hidden bg-white/10 backdrop-blur-lg shadow-xl">
-        <img src="/images/hero-living-room.jpg" alt="Modern Living Room" class="w-full h-auto object-cover" />
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-4">
-          <RouterLink to="/preview" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition">Explore Preview</RouterLink>
-          <RouterLink to="/studio" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-white font-medium transition">Enter Studio</RouterLink>
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Design Your Dream Home</h1>
+        <p>Scan, customize & visualize in hyper‑realistic 3D</p>
+        <div class="cta">
+          <RouterLink to="/scan" class="btn btn-primary">Scan Blueprint</RouterLink>
+          <RouterLink to="/customize" class="btn btn-outline">Start Designing</RouterLink>
         </div>
+      </div>
+      <div class="hero-image">
+        <img src="@/assets/hero-preview.png" alt="3D Preview" />
       </div>
     </section>
 
     <!-- Features -->
-    <section class="py-20 px-4">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Features</h2>
-      <div class="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-12 text-center">
-        <FeatureCard icon="/icons/scan.svg" label="Scan Blueprints" />
-        <FeatureCard icon="/icons/edit.svg" label="Real-Time Editing" />
-        <FeatureCard icon="/icons/drag.svg" label="Drag & Drop" />
-        <FeatureCard icon="/icons/share.svg" label="Share to Contractors" />
-      </div>
-    </section>
-
-    <!-- Pricing -->
-    <section class="py-20 px-4 bg-[#191C2A]">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Pricing</h2>
-      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        <PricingCard
-          title="Monthly"
-          price="$14.99"
-          unit="/mo"
-          features="['4K Walkthrough', 'Drag & Drop', 'Customization', 'Blueprint Scanning', 'Share']"
-        />
-        <PricingCard
-          title="Yearly"
-          price="$179.99"
-          unit="/yr"
-          features="['4K Walkthrough', 'Drag & Drop', 'Customization', 'Blueprint Scanning', 'Share']"
-        />
-      </div>
-    </section>
-
-    <!-- Public Products -->
-    <section class="py-20 px-4">
-      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">Public Products</h2>
-      <div class="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-        <ProductCard v-for="n in 4" :key="n" :image="`/images/house${n}.jpg`" :label="`Builder ${n}`" />
+    <section class="features">
+      <h2>Everything You Need</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="icon-wrapper">
+            <img src="@/assets/scan-icon.png" alt="" />
+          </div>
+          <h3>Scan Blueprints</h3>
+          <p>Instantly convert 2D plans into editable 3D models.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-wrapper">
+            <img src="@/assets/edit-icon.png" alt="" />
+          </div>
+          <h3>Full Customization</h3>
+          <p>Change floors, walls, lighting & furniture in real time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon-wrapper">
+            <img src="@/assets/share-icon.png" alt="" />
+          </div>
+          <h3>Explore & Share</h3>
+          <p>Publish your designs or browse the community gallery.</p>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import FeatureCard from '@/components/FeatureCard.vue';
-import PricingCard from '@/components/PricingCard.vue';
-import ProductCard from '@/components/ProductCard.vue';
-
-export default {
-  name: 'HomePage',
-  components: { RouterLink, FeatureCard, PricingCard, ProductCard },
-  setup() {
-    const open = ref(false);
-    return { open };
-  }
-};
+const open = ref(false);
 </script>
 
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+<style scoped lang="scss">
+// Color palette
+$white: #ffffff;
+$black: #000;
+$primary: #007AFF;
+$text-dark: #1A1A1A;
+$bg-light: #F5F5F7;
 
-.font-inter { font-family: 'Inter', sans-serif; }
-.fade-enter-active, .fade-leave-active { transition: opacity .3s ease; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+// Global reset
+.home {
+  font-family: 'Inter', sans-serif;
+  color: $text-dark;
+  background: $bg-light;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+// Navbar
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  background: rgba($white, 0.75);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 10px rgba($black, 0.05);
+
+  .logo img {
+    height: 2.5rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+
+    a {
+      position: relative;
+      text-decoration: none;
+      color: $text-dark;
+      font-weight: 600;
+      transition: color 0.3s;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -0.25rem;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: $primary;
+        transition: width 0.3s;
+      }
+      &:hover {
+        color: $primary;
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+      stroke: $text-dark;
+      stroke-width: 2;
+    }
+  }
+}
+
+.mobile-links {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: $white;
+  width: 100%;
+  list-style: none;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 12px rgba($black, 0.1);
+
+  li + li {
+    margin-top: 1rem;
+  }
+  a {
+    color: $text-dark;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+}
+
+// Hero
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6rem 2rem;
+
+  .hero-content {
+    max-width: 40rem;
+
+    h1 {
+      font-size: 3.5rem;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      color: darken($text-dark, 10%);
+    }
+    .cta {
+      display: flex;
+      gap: 1.5rem;
+
+      .btn {
+        padding: 0.875rem 2rem;
+        font-weight: 700;
+        border-radius: 0.75rem;
+        transition: transform 0.3s, box-shadow 0.3s;
+
+        &.btn-primary {
+          background: $primary;
+          color: $white;
+          box-shadow: 0 8px 20px rgba($primary, 0.3);
+          &:hover { transform: translateY(-3px); }
+        }
+        &.btn-outline {
+          background: transparent;
+          border: 2px solid $primary;
+          color: $primary;
+          &:hover {
+            background: $primary;
+            color: $white;
+            transform: translateY(-3px);
+          }
+        }
+      }
+    }
+  }
+
+  .hero-image img {
+    max-width: 500px;
+    border-radius: 2rem;
+    box-shadow: 0 20px 40px rgba($black, 0.1);
+    transition: transform 0.5s;
+    &:hover { transform: scale(1.02); }
+  }
+}
+
+// Features
+.features {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: $white;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 2.5rem;
+
+    .feature-card {
+      background: rgba($white, 0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba($black, 0.05);
+      transition: transform 0.3s;
+
+      &:hover { transform: translateY(-5px); }
+
+      .icon-wrapper {
+        width: 3rem;
+        height: 3rem;
+        margin: 0 auto 1rem;
+      }
+      h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+        color: $text-dark;
+      }
+      p {
+        color: darken($text-dark, 20%);
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .navbar .nav-links { display: none; }
+  .navbar .menu-toggle { display: block; }
+  .hero { flex-direction: column; text-align: center; gap: 3rem; }
+}
 </style>
+
