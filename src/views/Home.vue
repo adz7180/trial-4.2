@@ -1,543 +1,573 @@
 <template>
-  <div class="home">
+  <div class="app-container">
     <!-- Navbar -->
-    <nav class="navbar">
-      <RouterLink to="/" class="logo" aria-label="Home">
-        <img src="@/assets/logo.png" alt="HomeStyle" />
-      </RouterLink>
-      <ul class="nav-links">
-        <li><RouterLink to="/scan">Scan to 3D</RouterLink></li>
-        <li><RouterLink to="/customize">Customize</RouterLink></li>
-        <!-- Removed Explore Public -->
-      </ul>
-      <button class="menu-toggle" @click="open = !open" aria-label="Toggle menu">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-    </nav>
-
-    <!-- Mobile Nav -->
-    <transition name="fade">
-      <ul v-if="open" class="mobile-links" role="menu">
-        <li role="menuitem"><RouterLink to="/scan" @click="open=false">Scan to 3D</RouterLink></li>
-        <li role="menuitem"><RouterLink to="/customize" @click="open=false">Customize</RouterLink></li>
-        <!-- Removed Explore Public -->
-      </ul>
-    </transition>
-
-    <!-- Hero -->
-    <section class="hero" role="banner">
-      <div class="hero-content">
-        <h1>Design Your Dream Home</h1>
-        <p>Scan, customize & visualize in hyper‑realistic 3D</p>
-        <div class="cta">
-          <RouterLink to="/scan" class="btn btn-primary">Scan Blueprint</RouterLink>
-          <RouterLink to="/customize" class="btn btn-outline">Start Designing</RouterLink>
-        </div>
+    <header class="navbar">
+      <div class="navbar-left">
+        <RouterLink to="/" class="logo" aria-label="HexaNest Home">
+          <img src="@/assets/logo.png" alt="HexaNest Logo" />
+          <span class="brand-name">HexaNest</span>
+        </RouterLink>
+        <nav class="nav-links">
+          <RouterLink to="/" exact-active-class="active-link">Home</RouterLink>
+          <RouterLink to="/scan" exact-active-class="active-link">Scan to 3D</RouterLink>
+          <RouterLink to="/customize" exact-active-class="active-link">Customize</RouterLink>
+        </nav>
       </div>
-      <div class="hero-image" aria-hidden="true">
-        <img src="@/assets/hero-preview.png" alt="3D Preview of home design" />
+      <div class="navbar-right">
+        <RouterLink to="/login" class="btn btn-outline">Login</RouterLink>
+        <RouterLink to="/signup" class="btn btn-primary">Sign Up</RouterLink>
       </div>
-    </section>
+    </header>
 
-    <!-- Features -->
-    <section class="features" aria-label="Key features">
-      <h2>Everything You Need</h2>
-      <div class="feature-grid">
-        <div class="feature-card" tabindex="0">
-          <div class="icon-wrapper">
-            <img src="@/assets/scan-icon.png" alt="Scan icon" />
+    <!-- Main Content -->
+    <main>
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <div class="hero-text">
+          <h1>Build Your Dream Home with HexaNest</h1>
+          <p>Scan blueprints, customize interiors, and visualize in ultra-realistic 3D.</p>
+          <div class="hero-cta">
+            <RouterLink to="/scan" class="btn btn-primary btn-large">Scan Blueprint</RouterLink>
+            <RouterLink to="/customize" class="btn btn-outline btn-large">Start Designing</RouterLink>
           </div>
-          <h3>Scan Blueprints</h3>
-          <p>Instantly convert 2D plans into editable 3D models.</p>
         </div>
-        <div class="feature-card" tabindex="0">
-          <div class="icon-wrapper">
-            <img src="@/assets/edit-icon.png" alt="Edit icon" />
-          </div>
-          <h3>Full Customization</h3>
-          <p>Change floors, walls, lighting & furniture in real time.</p>
+        <div class="hero-image">
+          <img src="@/assets/hero-home.png" alt="3D home design preview" />
         </div>
-        <div class="feature-card" tabindex="0">
-          <div class="icon-wrapper">
-            <img src="@/assets/share-icon.png" alt="Share icon" />
-          </div>
-          <h3>Share Designs</h3>
-          <p>Publish your creations or browse community projects.</p>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Subscription Plans -->
-    <section class="subscription" aria-label="Subscription plans">
-      <h2>Choose Your Plan</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <h3>Free Trial</h3>
-          <p class="price">$0 <span>/ 3 days</span></p>
-          <ul>
-            <li>Access to basic features</li>
-            <li>Limited customization options</li>
-            <li>3-day trial period</li>
-          </ul>
-          <button class="btn btn-outline">Start Free Trial</button>
+      <!-- Features Section -->
+      <section class="features-section" aria-label="Key features of HexaNest">
+        <h2>Why HexaNest?</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <img src="@/assets/icons/blueprint.svg" alt="" class="feature-icon" />
+            <h3>Blueprint Scanning</h3>
+            <p>Turn your 2D blueprints into fully editable 3D models instantly.</p>
+          </div>
+          <div class="feature-card">
+            <img src="@/assets/icons/customization.svg" alt="" class="feature-icon" />
+            <h3>Full Customization</h3>
+            <p>Modify floors, walls, furniture, lighting, and more in real-time.</p>
+          </div>
+          <div class="feature-card">
+            <img src="@/assets/icons/share.svg" alt="" class="feature-icon" />
+            <h3>Share & Collaborate</h3>
+            <p>Publish your designs or browse community projects for inspiration.</p>
+          </div>
         </div>
-        <div class="plan-card popular">
-          <h3>Premium</h3>
-          <p class="price">$30 <span>/ month</span></p>
-          <ul>
-            <li>Full access to all customization</li>
-            <li>Download designs & export options</li>
-            <li>Priority support</li>
-          </ul>
-          <button class="btn btn-primary">Subscribe Now</button>
+      </section>
+
+      <!-- Subscription Plans -->
+      <section class="plans-section" aria-label="Subscription plans">
+        <h2>Choose Your Plan</h2>
+        <div class="plans-grid">
+          <article class="plan-card">
+            <header>
+              <h3>Free Trial</h3>
+              <p class="plan-price"><span class="price">$0</span> / 3 days</p>
+            </header>
+            <ul class="plan-features">
+              <li>Access to basic features</li>
+              <li>Limited customization options</li>
+              <li>3-day trial period</li>
+            </ul>
+            <RouterLink to="/signup" class="btn btn-outline btn-block">Start Free Trial</RouterLink>
+          </article>
+
+          <article class="plan-card popular">
+            <header>
+              <h3>Premium</h3>
+              <p class="plan-price"><span class="price">$30</span> / month</p>
+              <span class="popular-badge">Most Popular</span>
+            </header>
+            <ul class="plan-features">
+              <li>Full customization access</li>
+              <li>Download & export your designs</li>
+              <li>Priority support</li>
+            </ul>
+            <RouterLink to="/subscribe" class="btn btn-primary btn-block">Subscribe Now</RouterLink>
+          </article>
+
+          <article class="plan-card">
+            <header>
+              <h3>Company</h3>
+              <p class="plan-price"><span class="price">$60</span> / month</p>
+            </header>
+            <ul class="plan-features">
+              <li>Multi-user collaboration</li>
+              <li>API access & contractor matching</li>
+              <li>Dedicated account manager</li>
+            </ul>
+            <RouterLink to="/contact" class="btn btn-outline btn-block">Contact Sales</RouterLink>
+          </article>
         </div>
-        <div class="plan-card">
-          <h3>Company</h3>
-          <p class="price">$60 <span>/ month</span></p>
-          <ul>
-            <li>Multi-user collaboration</li>
-            <li>API access & contractor matching</li>
-            <li>Dedicated account manager</li>
-          </ul>
-          <button class="btn btn-outline">Contact Sales</button>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2025 HexaNest. All rights reserved.</p>
+    </footer>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
-const open = ref(false);
 </script>
 
 <style scoped lang="scss">
-// Colors
-$white: #ffffff;
-$black: #000000;
-$primary: #0066FF;
-$primary-light: #cce0ff;
-$text-dark: #222222;
-$text-muted: #555555;
-$bg-light: #f9fafb;
-$shadow-light: rgba(0,0,0,0.05);
-$shadow-strong: rgba(0,0,0,0.15);
+$app-primary: #0066ff;
+$app-primary-light: #cce4ff;
+$app-bg: #f9fafb;
+$app-text: #1a1a1a;
+$app-text-muted: #555;
+$app-radius: 20px;
+$app-shadow: rgba(0, 102, 255, 0.25);
 
-// Fonts
-$font-family: 'Inter', sans-serif;
-
-// Root
-.home {
-  font-family: $font-family;
-  background: $bg-light;
-  color: $text-dark;
-  min-height: 100vh;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  scroll-behavior: smooth;
+* {
+  box-sizing: border-box;
 }
 
-// Navbar
+.app-container {
+  font-family: 'Inter', sans-serif;
+  background: $app-bg;
+  color: $app-text;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar */
 .navbar {
-  position: sticky;
-  top: 0;
-  z-index: 999;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 3rem;
-  background: rgba($white, 0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  box-shadow: 0 4px 15px $shadow-light;
-  transition: background 0.3s ease;
+  padding: 1rem 3rem;
+  background: rgba(255 255 255 / 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 
-  .logo img {
-    height: 3rem;
-    user-select: none;
-  }
-
-  .nav-links {
+  .navbar-left {
     display: flex;
-    gap: 2.5rem;
+    align-items: center;
+    gap: 2rem;
 
-    a {
-      font-weight: 600;
-      font-size: 1.05rem;
-      color: $text-dark;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: $app-primary;
       text-decoration: none;
-      position: relative;
-      padding-bottom: 4px;
+      user-select: none;
 
-      &:hover,
-      &.router-link-exact-active {
-        color: $primary;
+      img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+    }
 
-        &::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 3px;
-          background: $primary;
-          border-radius: 3px 3px 0 0;
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+
+      a {
+        font-weight: 600;
+        color: $app-text-muted;
+        text-decoration: none;
+        font-size: 1.1rem;
+        padding-bottom: 3px;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+
+        &.active-link,
+        &:hover {
+          color: $app-primary;
+          border-color: $app-primary;
         }
       }
     }
   }
 
-  .menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    svg {
-      width: 1.8rem;
-      height: 1.8rem;
-      stroke: $text-dark;
-      stroke-width: 2.2;
-      transition: stroke 0.3s;
-      &:hover {
-        stroke: $primary;
+  .navbar-right {
+    display: flex;
+    gap: 1rem;
+
+    a.btn {
+      padding: 0.6rem 1.6rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: $app-radius;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+
+      &.btn-primary {
+        background-color: $app-primary;
+        color: white;
+        border: none;
+        box-shadow: 0 5px 15px $app-shadow;
+
+        &:hover {
+          background-color: darken($app-primary, 10%);
+          box-shadow: 0 8px 25px rgba(0, 102, 255, 0.4);
+        }
+      }
+
+      &.btn-outline {
+        background-color: transparent;
+        color: $app-primary;
+        border: 2.5px solid $app-primary;
+
+        &:hover {
+          background-color: $app-primary;
+          color: white;
+          box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
+        }
       }
     }
   }
 }
 
-// Mobile nav
-.mobile-links {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 100%;
-  background: $white;
-  box-shadow: 0 6px 18px $shadow-strong;
-  padding: 1.25rem 3rem;
-  list-style: none;
-  z-index: 998;
-
-  li + li {
-    margin-top: 1.2rem;
-  }
-  a {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: $text-dark;
-    text-decoration: none;
-
-    &:hover {
-      color: $primary;
-    }
-  }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-// Hero section
-.hero {
+/* Main */
+main {
+  flex: 1;
+  padding: 3rem 6rem;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 6rem;
+
+  @media (max-width: 900px) {
+    padding: 2rem 2rem;
+  }
+}
+
+/* Hero Section */
+.hero-section {
+  display: flex;
   align-items: center;
-  padding: 6rem 4rem;
   gap: 4rem;
 
-  .hero-content {
-    max-width: 480px;
+  @media (max-width: 850px) {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-text {
+    flex: 1;
 
     h1 {
       font-size: 3.75rem;
-      line-height: 1.1;
       font-weight: 900;
       margin-bottom: 1rem;
-      color: $primary;
-      text-shadow: 1px 1px 8px rgba($primary, 0.3);
+      color: $app-primary;
+      line-height: 1.1;
+      user-select: none;
+      text-shadow: 1px 1px 6px rgba($app-primary, 0.35);
     }
 
     p {
       font-size: 1.5rem;
       margin-bottom: 2.5rem;
-      color: darken($text-dark, 15%);
+      color: $app-text-muted;
+      font-weight: 500;
+      max-width: 450px;
+      user-select: none;
     }
 
-    .cta {
+    .hero-cta {
       display: flex;
-      gap: 1.75rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: flex-start;
 
-      .btn {
-        border-radius: 12px;
+      @media (max-width: 850px) {
+        justify-content: center;
+      }
+
+      .btn-large {
+        font-size: 1.25rem;
+        padding: 1rem 3rem;
+        border-radius: $app-radius;
         font-weight: 700;
-        padding: 1rem 2.5rem;
-        font-size: 1.125rem;
-        box-shadow: 0 12px 30px rgba($primary, 0.35);
         cursor: pointer;
         transition: all 0.3s ease;
-
-        &.btn-primary {
-          background: $primary;
-          color: $white;
-          border: none;
-          &:hover {
-            background: darken($primary, 10%);
-            box-shadow: 0 15px 40px rgba($primary, 0.5);
-            transform: translateY(-4px);
-          }
-        }
-
-        &.btn-outline {
-          background: transparent;
-          border: 3px solid $primary;
-          color: $primary;
-          &:hover {
-            background: $primary;
-            color: $white;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba($primary, 0.35);
-          }
-        }
       }
     }
   }
 
-  .hero-image img {
-    width: 520px;
-    border-radius: 32px;
-    box-shadow: 0 40px 80px rgba($primary, 0.15);
-    transition: transform 0.5s ease;
+  .hero-image {
+    flex: 1;
 
-    &:hover {
-      transform: scale(1.05) rotate(-1deg);
+    img {
+      width: 100%;
+      max-width: 550px;
+      border-radius: 30px;
+      box-shadow: 0 30px 80px rgba($app-primary, 0.25);
+      transition: transform 0.6s ease;
+
+      &:hover {
+        transform: scale(1.05) rotate(-1deg);
+      }
     }
   }
 }
 
-// Features section
-.features {
-  background: $white;
-  padding: 6rem 4rem;
+/* Features Section */
+.features-section {
   text-align: center;
 
   h2 {
     font-size: 3rem;
     font-weight: 900;
     margin-bottom: 3.5rem;
-    color: $text-dark;
+    user-select: none;
   }
 
-  .feature-grid {
+  .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 3.5rem;
 
     .feature-card {
-      background: rgba($primary-light, 0.35);
+      background: white;
       border-radius: 24px;
-      padding: 3rem 2.5rem;
-      box-shadow: 0 15px 40px rgba($primary, 0.15);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 15px 40px rgba($app-primary, 0.1);
       transition: transform 0.3s ease;
       cursor: default;
 
       &:hover {
         transform: translateY(-12px);
-        box-shadow: 0 20px 60px rgba($primary, 0.3);
+        box-shadow: 0 25px 60px rgba($app-primary, 0.2);
       }
 
-      .icon-wrapper {
-        width: 4.5rem;
-        height: 4.5rem;
-        margin: 0 auto 1.5rem;
-        filter: drop-shadow(0 3px 3px rgba($primary, 0.3));
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-        }
+      .feature-icon {
+        width: 60px;
+        margin-bottom: 1.5rem;
+        filter: drop-shadow(0 3px 5px rgba($app-primary, 0.3));
       }
 
       h3 {
         font-size: 1.5rem;
         margin-bottom: 0.75rem;
-        color: $primary;
-        font-weight: 800;
+        color: $app-primary;
+        font-weight: 900;
       }
 
       p {
         font-size: 1.1rem;
-        color: darken($text-dark, 20%);
+        color: $app-text-muted;
         line-height: 1.4;
       }
     }
   }
 }
 
-// Subscription plans section
-.subscription {
-  background: linear-gradient(135deg, $primary-light 0%, lighten($primary-light, 15%) 100%);
-  padding: 5rem 4rem;
-  color: $text-dark;
+/* Plans Section */
+.plans-section {
+  background: linear-gradient(135deg, $app-primary-light 0%, lighten($app-primary-light, 15%) 100%);
+  padding: 4rem 3rem;
+  border-radius: 40px;
+  color: $app-text;
   text-align: center;
-  border-radius: 32px 32px 0 0;
-  margin-top: auto; // Push to bottom if container flex
 
   h2 {
     font-size: 3rem;
     font-weight: 900;
     margin-bottom: 3rem;
-    color: darken($primary, 15%);
+    user-select: none;
   }
 
   .plans-grid {
     display: flex;
-    justify-content: center;
-    gap: 3rem;
+    gap: 2rem;
     flex-wrap: wrap;
+    justify-content: center;
 
-    .plan-card {
-      background: $white;
-      color: $text-dark;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px $shadow-light;
+    article.plan-card {
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 15px 40px rgba($app-primary, 0.15);
       padding: 2.5rem 3rem;
-      max-width: 280px;
-      flex: 1 1 280px;
+      max-width: 320px;
+      flex: 1 1 320px;
       display: flex;
       flex-direction: column;
       align-items: center;
       transition: box-shadow 0.3s ease;
 
       &.popular {
-        border: 3px solid $primary;
-        box-shadow: 0 20px 60px rgba($primary, 0.4);
-        transform: translateY(-8px);
-      }
+        border: 3.5px solid $app-primary;
+        box-shadow: 0 25px 70px rgba($app-primary, 0.4);
+        transform: translateY(-10px);
+        position: relative;
 
-      h3 {
-        font-size: 1.75rem;
-        font-weight: 900;
-        margin-bottom: 0.75rem;
-      }
-
-      .price {
-        font-size: 2.25rem;
-        font-weight: 900;
-        margin-bottom: 2rem;
-        color: $primary;
-
-        span {
-          font-size: 1rem;
-          font-weight: 600;
-          color: $text-muted;
-          margin-left: 0.25rem;
+        &::before {
+          content: "Most Popular";
+          position: absolute;
+          top: -20px;
+          right: 20px;
+          background: $app-primary;
+          color: white;
+          padding: 0.25rem 1rem;
+          font-weight: 700;
+          border-radius: 14px;
+          font-size: 0.875rem;
+          user-select: none;
+          box-shadow: 0 3px 10px rgba($app-primary, 0.5);
         }
       }
 
-      ul {
-        list-style: none;
-        padding: 0;
+      header {
         margin-bottom: 2rem;
-        width: 100%;
-        color: $text-muted;
-        font-weight: 600;
-        font-size: 1rem;
-        line-height: 1.5;
 
-        li {
-          margin-bottom: 1rem;
-          position: relative;
-          padding-left: 1.5rem;
+        h3 {
+          font-size: 1.8rem;
+          font-weight: 900;
+          margin-bottom: 0.5rem;
+        }
 
-          &::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: $primary;
+        .plan-price {
+          font-size: 2.5rem;
+          font-weight: 900;
+          color: $app-primary;
+
+          .price {
             font-weight: 900;
+          }
+
+          & > span {
+            font-weight: 600;
+            font-size: 1.15rem;
+            color: $app-text-muted;
+            margin-left: 0.25rem;
           }
         }
       }
 
-      button {
-        padding: 0.9rem 2.5rem;
-        border-radius: 16px;
+      .plan-features {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 2.5rem;
+        width: 100%;
+        color: $app-text-muted;
+        font-weight: 600;
+        font-size: 1.05rem;
+        line-height: 1.6;
+
+        li {
+          margin-bottom: 1.2rem;
+          position: relative;
+          padding-left: 1.6rem;
+
+          &::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: $app-primary;
+            font-weight: 900;
+            user-select: none;
+          }
+        }
+      }
+
+      .btn {
+        width: 100%;
+        padding: 1rem 0;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        border-radius: 16px;
         cursor: pointer;
         transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        border: none;
 
         &.btn-primary {
-          background: $primary;
-          border: none;
-          color: $white;
+          background-color: $app-primary;
+          color: white;
+          box-shadow: 0 15px 45px rgba($app-primary, 0.5);
 
           &:hover {
-            background: darken($primary, 10%);
-            box-shadow: 0 15px 40px rgba($primary, 0.6);
+            background-color: darken($app-primary, 10%);
+            box-shadow: 0 20px 60px rgba($app-primary, 0.6);
             transform: translateY(-3px);
           }
         }
 
         &.btn-outline {
-          background: transparent;
-          border: 3px solid $primary;
-          color: $primary;
+          background-color: transparent;
+          color: $app-primary;
+          border: 3px solid $app-primary;
 
           &:hover {
-            background: $primary;
-            color: $white;
+            background-color: $app-primary;
+            color: white;
+            box-shadow: 0 15px 45px rgba($app-primary, 0.4);
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba($primary, 0.35);
           }
+        }
+
+        &.btn-block {
+          display: block;
         }
       }
     }
   }
 }
 
-// Responsive adjustments
-@media (max-width: 992px) {
-  .hero {
+/* Footer */
+.footer {
+  padding: 2rem 3rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: $app-text-muted;
+  user-select: none;
+}
+
+/* Responsive */
+@media (max-width: 950px) {
+  .hero-section {
     flex-direction: column;
-    padding: 4rem 2rem;
     text-align: center;
 
     .hero-image img {
-      width: 90vw;
-      max-width: 400px;
-      margin: 0 auto;
+      max-width: 90vw;
       margin-top: 2rem;
       transform: none !important;
     }
   }
 
-  .features .feature-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-
-  .subscription .plans-grid {
-    flex-direction: column;
-    gap: 2rem;
-  }
-
-  .navbar {
-    padding: 1rem 2rem;
+  main {
+    padding: 2rem 2rem;
   }
 }
 
-@media (max-width: 480px) {
-  .nav-links {
-    display: none;
+@media (max-width: 700px) {
+  .plans-section .plans-grid {
+    flex-direction: column;
   }
 
-  .menu-toggle {
-    display: block;
+  .navbar {
+    padding: 1rem 1.5rem;
+
+    .navbar-left {
+      gap: 1rem;
+    }
+
+    .nav-links {
+      gap: 1rem;
+    }
   }
 }
 </style>
