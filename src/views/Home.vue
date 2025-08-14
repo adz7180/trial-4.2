@@ -45,7 +45,7 @@
         </div>
 
         <div class="hero-image" aria-hidden="true">
-          <!-- Placeholder visual container (replace with your asset if desired) -->
+          <!-- Replace with your asset if desired -->
           <div class="glass-card"></div>
         </div>
       </section>
@@ -138,6 +138,25 @@
 import { RouterLink } from 'vue-router'
 </script>
 
+<!-- Global (non-scoped) styles to guarantee scrolling and smooth behavior -->
+<style lang="scss">
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+#app, .app-container {
+  min-height: 100%;
+}
+
+.app-container {
+  overflow-x: hidden; /* no sideways scroll */
+  overflow-y: auto;   /* ensure vertical scroll */
+}
+</style>
+
 <style scoped lang="scss">
 /* ===== Brand System (Apple/Tesla-inspired) ===== */
 $bg: #FFFFFF;                 // primary background
@@ -200,189 +219,4 @@ $shadow-strong: 0 25px 70px rgba(0,0,0,.16);
     a.btn {
       padding: .6rem 1.6rem; font-weight: 700; font-size: 1rem;
       border-radius: $radius; cursor: pointer; transition: all .25s ease;
-      text-align: center; text-decoration: none; user-select: none; border: 2px solid transparent;
-
-      &.btn-primary {
-        background-color: $teal; color: #fff; box-shadow: 0 10px 24px rgba(1,77,78,.25);
-
-        &:hover { transform: translateY(-1px); box-shadow: 0 14px 36px rgba(1,77,78,.35); }
-      }
-
-      &.btn-outline {
-        background-color: transparent; color: $ink; border-color: $ink;
-
-        &:hover { background-color: $ink; color: #fff; }
-      }
-    }
-  }
-}
-
-/* ===== Main ===== */
-main {
-  flex: 1; padding: 3rem 6rem; display: flex; flex-direction: column; gap: 6rem;
-
-  @media (max-width: 900px) { padding: 2rem 2rem; }
-}
-
-/* ===== Hero ===== */
-.hero-section {
-  display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center;
-
-  @media (max-width: 900px) { grid-template-columns: 1fr; gap: 36px; text-align: center; }
-
-  .hero-text {
-    h1 {
-      font-size: clamp(2.2rem, 5vw, 3.75rem);
-      font-weight: 900; margin-bottom: 1rem; line-height: 1.08; color: $ink;
-    }
-    p {
-      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-      margin-bottom: 2rem; color: $muted; font-weight: 500; max-width: 55ch;
-    }
-    .hero-cta {
-      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: flex-start;
-      @media (max-width: 900px) { justify-content: center; }
-
-      .btn-large {
-        font-size: 1.1rem; padding: 1rem 2rem; border-radius: $radius; font-weight: 700;
-      }
-    }
-    .hero-badges {
-      margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap; color: $muted;
-      span { padding: 6px 10px; border:1px solid $line; border-radius: 999px; font-size: .85rem; }
-    }
-  }
-
-  .hero-image {
-    .glass-card {
-      width: 100%; aspect-ratio: 16/10; border-radius: 24px;
-      background: linear-gradient(135deg, #ffffff 40%, #f7f7f7 60%);
-      border: 1px solid $line; box-shadow: $shadow-soft, inset 0 0 0 1px rgba(255,255,255,.6);
-    }
-  }
-}
-
-/* ===== Features ===== */
-.features-section {
-  text-align: center;
-
-  h2 { font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 900; margin-bottom: 3rem; }
-
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem;
-
-    .feature-card {
-      background: #fff; border-radius: 20px; padding: 2rem;
-      box-shadow: 0 15px 40px rgba(0,0,0,.06); border: 1px solid $line; transition: transform .25s ease;
-
-      &:hover { transform: translateY(-8px); box-shadow: 0 22px 60px rgba(0,0,0,.08); }
-
-      .minimal-icon {
-        width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: 12px;
-        border: 2px solid $teal; position: relative;
-
-        /* tiny accent to feel premium without emoji */
-        &::after {
-          content: ""; position: absolute; right: -6px; top: -6px;
-          width: 12px; height: 12px; border-radius: 50%; background: $champagne; box-shadow: 0 2px 6px rgba(198,166,100,.4);
-        }
-      }
-
-      h3 { font-size: 1.25rem; margin-bottom: .5rem; color: $ink; font-weight: 800; }
-      p { color: $muted; font-size: 1.05rem; line-height: 1.5; }
-    }
-  }
-}
-
-/* ===== Plans ===== */
-.plans-section {
-  background: $soft; border-radius: 40px; padding: 4rem 3rem; text-align: center; border: 1px solid $line;
-
-  h2 { font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 900; margin-bottom: .5rem; }
-  .subtitle { color: $muted; margin-bottom: 2rem; }
-
-  .plans-grid {
-    display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;
-
-    article.plan-card {
-      background: #fff; border-radius: 24px; border: 1px solid $line;
-      box-shadow: 0 15px 40px rgba(0,0,0,.06);
-      padding: 2rem 2.25rem; max-width: 320px; flex: 1 1 320px;
-      display: flex; flex-direction: column; align-items: center; position: relative;
-
-      &.popular {
-        border: 3px solid $teal; box-shadow: 0 25px 70px rgba(1,77,78,.18); transform: translateY(-8px);
-
-        .popular-badge {
-          position: absolute; top: -18px; right: 18px;
-          background: $champagne; color: #1d1d1d; padding: .25rem .9rem;
-          font-weight: 800; border-radius: 999px; font-size: .85rem; letter-spacing: .02em;
-          box-shadow: 0 4px 10px rgba(198,166,100,.35);
-        }
-      }
-
-      header {
-        margin-bottom: 1.2rem;
-        h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: .25rem; }
-        .plan-price {
-          font-size: 2rem; font-weight: 900; color: $teal;
-          .price { font-weight: 900; }
-        }
-      }
-
-      .plan-features {
-        list-style: none; padding: 0; margin-bottom: 1.6rem; width: 100%;
-        color: $muted; font-weight: 600; font-size: 1rem; line-height: 1.6;
-
-        li {
-          margin-bottom: .9rem; position: relative; padding-left: 1.4rem;
-          &::before {
-            content: ""; position: absolute; left: 0; top: .55rem;
-            width: 9px; height: 9px; border-radius: 2px; background: $teal;
-          }
-        }
-      }
-
-      .btn {
-        width: 100%; padding: 1rem 0; font-weight: 800; font-size: 1.05rem;
-        border-radius: 14px; cursor: pointer; transition: all .25s ease;
-        text-align: center; text-decoration: none; user-select: none; border: 2px solid transparent;
-
-        &.btn-primary {
-          background-color: $teal; color: #fff; box-shadow: 0 15px 45px rgba(1,77,78,.35);
-
-          &:hover { transform: translateY(-2px); box-shadow: 0 20px 60px rgba(1,77,78,.45); }
-        }
-
-        &.btn-outline {
-          background-color: transparent; color: $ink; border-color: $ink;
-
-          &:hover { background: $ink; color: #fff; }
-        }
-
-        &.btn-block { display: block; }
-      }
-    }
-  }
-}
-
-/* ===== Footer ===== */
-.footer {
-  padding: 2rem 3rem; text-align: center; font-weight: 600; font-size: 1rem; color: $muted;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 950px) {
-  .hero-section { grid-template-columns: 1fr; text-align: center;
-    .glass-card { max-width: 90vw; margin: 0 auto; }
-  }
-  main { padding: 2rem 2rem; }
-}
-@media (max-width: 700px) {
-  .plans-section .plans-grid { flex-direction: column; }
-  .navbar { padding: 1rem 1.5rem;
-    .navbar-left { gap: 1rem; }
-    .nav-links { gap: 1rem; }
-  }
-}
-</style>
+      text-align: center; text-decoration: none
