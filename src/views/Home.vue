@@ -1,4 +1,4 @@
-<template> 
+<template>
   <div class="app-container">
     <!-- Navbar -->
     <header class="navbar">
@@ -137,25 +137,6 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 </script>
-
-<!-- Global styles to ensure scrollability (added) -->
-<style lang="scss">
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-}
-
-#app, .app-container {
-  min-height: 100%;
-}
-
-.app-container {
-  overflow-x: hidden; /* prevent horizontal scroll */
-  overflow-y: auto;   /* ensure vertical scroll */
-}
-</style>
 
 <style scoped lang="scss">
 /* ===== Brand System (Apple/Tesla-inspired) ===== */
@@ -356,3 +337,52 @@ main {
         li {
           margin-bottom: .9rem; position: relative; padding-left: 1.4rem;
           &::before {
+            content: ""; position: absolute; left: 0; top: .55rem;
+            width: 9px; height: 9px; border-radius: 2px; background: $teal;
+          }
+        }
+      }
+
+      .btn {
+        width: 100%; padding: 1rem 0; font-weight: 800; font-size: 1.05rem;
+        border-radius: 14px; cursor: pointer; transition: all .25s ease;
+        text-align: center; text-decoration: none; user-select: none; border: 2px solid transparent;
+
+        &.btn-primary {
+          background-color: $teal; color: #fff; box-shadow: 0 15px 45px rgba(1,77,78,.35);
+
+          &:hover { transform: translateY(-2px); box-shadow: 0 20px 60px rgba(1,77,78,.45); }
+        }
+
+        &.btn-outline {
+          background-color: transparent; color: $ink; border-color: $ink;
+
+          &:hover { background: $ink; color: #fff; }
+        }
+
+        &.btn-block { display: block; }
+      }
+    }
+  }
+}
+
+/* ===== Footer ===== */
+.footer {
+  padding: 2rem 3rem; text-align: center; font-weight: 600; font-size: 1rem; color: $muted;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 950px) {
+  .hero-section { grid-template-columns: 1fr; text-align: center;
+    .glass-card { max-width: 90vw; margin: 0 auto; }
+  }
+  main { padding: 2rem 2rem; }
+}
+@media (max-width: 700px) {
+  .plans-section .plans-grid { flex-direction: column; }
+  .navbar { padding: 1rem 1.5rem;
+    .navbar-left { gap: 1rem; }
+    .nav-links { gap: 1rem; }
+  }
+}
+</style>
