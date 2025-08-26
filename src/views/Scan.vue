@@ -35,7 +35,7 @@
       <section class="uploader" aria-label="Upload blueprint">
         <div
           class="dropzone"
-          :class="{ dragover: isDragOver, ready: fileName }"
+          :class="{ dragover: isDragOver, ready: fileName, disabled: loading }"
           @dragover.prevent="onDragOver"
           @dragleave.prevent="onDragLeave"
           @drop.prevent="onDrop"
@@ -47,12 +47,13 @@
             accept=".pdf,image/*"
             @change="onPickFile"
             aria-label="Upload a PDF or image"
+            :disabled="loading"
           />
           <div class="dz-inner">
-            <div class="icon"></div>
+            <div class="icon" aria-hidden="true"></div>
             <div class="dz-copy">
               <strong>Drag & drop</strong> your blueprint here<br />
-              or <button class="linklike" @click="trigger">browse</button> to upload
+              or <button class="linklike" :disabled="loading" @click="trigger">browse</button> to upload
             </div>
             <div class="dz-sub">Accepted: PDF, PNG, JPG • Max 50MB</div>
             <div v-if="fileName" class="dz-file">Selected: {{ fileName }}</div>
@@ -63,19 +64,26 @@
           <button class="btn btn-primary" :disabled="!file || loading" @click="startScan">
             {{ loading ? 'Scanning…' : 'Generate 3D Model' }}
           </button>
-          <button class="btn btn-outline" :disabled="!file || loading" @click="clearFile">Clear</button>
+          <button class="btn btn-outline" :disabled="(!file && !loading) || loading" @click="clearFile">
+            {{ loading ? 'Cancel' : 'Clear' }}
+          </button>
         </div>
 
         <!-- Progress & error -->
-        <div v-if="loading" class="progress">
+        <div v-if="loading" class="progress" aria-live="polite">
           <div class="bar"><span :style="{ width: progress + '%' }"></span></div>
           <div class="muted">Processing… this may take a moment.</div>
         </div>
-        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="error" class="error" aria-live="assertive">{{ error }}</p>
       </section>
 
       <!-- Viewer -->
-      <section v-if="modelUrl" class="viewer-section" aria-label="3D viewer">
+      <section
+        v-if="modelUrl"
+        class="viewer-section"
+        aria-label="3D viewer"
+        ref="viewerSection"
+      >
         <div class="viewer-card">
           <div class="viewer-head">
             <h2>Your 3D model</h2>
@@ -106,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick, onBeforeUnmount } from 'vue'
 import { RouterLink } from 'vue-router'
 import SceneViewer from '@/components/SceneViewer.vue'
 
@@ -121,20 +129,28 @@ const progress = ref(12)
 const isDragOver = ref(false)
 
 const fileInput = ref(null)
+const viewerSection = ref(null)
+let timer = null
+let controller = null // AbortController for in-flight scans
 
 // UI handlers
 function trigger() { fileInput.value?.click() }
 function onPickFile(e) { handleFile(e.target.files?.[0]) }
-function onDragOver() { isDragOver.value = true }
+function onDragOver() { if (!loading.value) isDragOver.value = true }
 function onDragLeave() { isDragOver.value = false }
 function onDrop(e) {
   isDragOver.value = false
+  if (loading.value) return
   handleFile(e.dataTransfer?.files?.[0])
 }
 function clearFile() {
+  // If currently loading, treat Clear as cancel
+  if (loading.value && controller) controller.abort()
   file.value = null
   fileName.value = ''
   error.value = ''
+  modelUrl.value = null
+  suggestions.value = []
 }
 
 // Validation & set
@@ -150,13 +166,19 @@ function handleFile(f) {
 }
 
 // Cosmetic progress while waiting
-let timer = null
 function startFakeProgress() {
   progress.value = 12
   stopFakeProgress()
-  timer = setInterval(() => { if (progress.value < 85) progress.value += Math.random() * 4 }, 400)
+  timer = setInterval(() => {
+    if (progress.value < 85) progress.value += Math.random() * 4
+  }, 400)
 }
 function stopFakeProgress() { if (timer) { clearInterval(timer); timer = null } }
+
+onBeforeUnmount(() => {
+  stopFakeProgress()
+  if (controller) controller.abort()
+})
 
 // API call — preserves your original behavior
 async function startScan() {
@@ -167,11 +189,15 @@ async function startScan() {
   suggestions.value = []
   startFakeProgress()
 
+  // Abort any previous request
+  if (controller) controller.abort()
+  controller = new AbortController()
+
   const formData = new FormData()
   formData.append('file', file.value)
 
   try {
-    const res = await fetch('/api/scan', { method: 'POST', body: formData })
+    const res = await fetch('/api/scan', { method: 'POST', body: formData, signal: controller.signal })
     if (!res.ok) {
       const text = await res.text().catch(() => '')
       console.error('API Error:', res.status, text)
@@ -182,13 +208,21 @@ async function startScan() {
       progress.value = 100
       modelUrl.value = data.modelPath
       suggestions.value = Array.isArray(data.suggestions) ? data.suggestions : []
+
+      await nextTick()
+      // Smoothly scroll to the viewer
+      viewerSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } else {
       console.error('Scan failed (server):', data)
       throw new Error('Scan failed. Please try another file.')
     }
   } catch (e) {
-    console.error('Upload error:', e)
-    error.value = e?.message || 'Upload error. See console for details.'
+    if (e?.name === 'AbortError') {
+      error.value = 'Upload canceled.'
+    } else {
+      console.error('Upload error:', e)
+      error.value = e?.message || 'Upload error. See console for details.'
+    }
   } finally {
     stopFakeProgress()
     loading.value = false
@@ -250,6 +284,7 @@ html, body { height: 100%; margin: 0; padding: 0; scroll-behavior: smooth; }
 }
 .dropzone.dragover { border-color:var(--teal); box-shadow:0 12px 32px rgba(1,77,78,.14); background:#fdfefe; }
 .dropzone.ready { border-color:#cfd8dc; }
+.dropzone.disabled { opacity:.6; pointer-events:none; }
 .file-input { position:absolute; inset:0; opacity:0; cursor:pointer; }
 .dz-inner { padding:28px; display:grid; place-items:center; gap:8px; }
 .icon { width:48px; height:48px; border:2px solid var(--teal); border-radius:12px; position:relative; }
@@ -257,25 +292,30 @@ html, body { height: 100%; margin: 0; padding: 0; scroll-behavior: smooth; }
 .dz-copy { font-size:1.05rem; }
 .dz-copy strong { font-weight:900; }
 .linklike { border:none; background:none; color:var(--teal); font-weight:800; text-decoration:underline; cursor:pointer; }
-.linklike:hover { opacity:.8; }
+.linklike:disabled { opacity:.5; cursor:not-allowed; }
+.linklike:hover:not(:disabled) { opacity:.8; }
 .dz-sub { color:var(--muted); font-size:.9rem; }
 .dz-file { margin-top:6px; font-weight:700; }
 .actions { margin:16px auto 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
 
 .btn { padding:.65rem 1.25rem; font-weight:800; border-radius:16px; border:2px solid transparent; cursor:pointer; }
-.btn-primary { background:var(--teal); color:#fff; box-shadow:0 10px 24px rgba(1,77,78,.22); }
-.btn-primary:hover { transform:translateY(-1px); box-shadow:0 14px 36px rgba(1,77,78,.32); }
+.btn[disabled] { opacity:.5; cursor:not-allowed; }
+.btn-primary { background:var(--teal); color:#fff; box-shadow:0 10px 24px rgba(1,77,78,.22); transition: box-shadow .2s, transform .06s; }
+.btn-primary:hover:not([disabled]) { transform:translateY(-1px); box-shadow:0 14px 36px rgba(1,77,78,.32); }
 .btn-outline { background:#fff; color:var(--ink); border-color:var(--ink); }
-.btn-outline:hover { background:var(--ink); color:#fff; }
+.btn-outline:hover:not([disabled]) { background:var(--ink); color:#fff; }
 
 .progress { margin:12px auto 0; max-width:820px; text-align:left; }
 .bar { height:10px; border-radius:999px; background:#f1f5f9; overflow:hidden; border:1px solid #e6e6e6; }
 .bar span { display:block; height:100%; background:var(--teal); width:0; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .bar span { transition: none; }
+  .btn-primary { transition: none; }
+}
 .muted { font-size:.9rem; color:var(--muted); margin-top:6px; }
 .error { color:#C0392B; margin-top:10px; font-weight:700; }
 
 /* Viewer */
-.viewer-section { }
 .viewer-card {
   background:#fff; border:1px solid var(--line); border-radius:24px;
   box-shadow:0 15px 40px rgba(0,0,0,.06); padding:18px 18px 0;
