@@ -113,119 +113,154 @@
   </div>
 </template>
 
-<script setup>
-import { ref, nextTick, onBeforeUnmount } from 'vue'
-import { RouterLink } from 'vue-router'
+<script>
 import SceneViewer from '@/components/SceneViewer.vue'
 
-// State
-const modelUrl = ref(null)
-const suggestions = ref([])
-const file = ref(null)
-const fileName = ref('')
-const error = ref('')
-const loading = ref(false)
-const progress = ref(12)
-const isDragOver = ref(false)
-
-const fileInput = ref(null)
-const viewerSection = ref(null)
-let timer = null
-let controller = null // AbortController for in-flight scans
-
-// UI handlers
-function trigger() { fileInput.value?.click() }
-function onPickFile(e) { handleFile(e.target.files?.[0]) }
-function onDragOver() { if (!loading.value) isDragOver.value = true }
-function onDragLeave() { isDragOver.value = false }
-function onDrop(e) {
-  isDragOver.value = false
-  if (loading.value) return
-  handleFile(e.dataTransfer?.files?.[0])
-}
-function clearFile() {
-  // If currently loading, treat Clear as cancel
-  if (loading.value && controller) controller.abort()
-  file.value = null
-  fileName.value = ''
-  error.value = ''
-  modelUrl.value = null
-  suggestions.value = []
-}
-
-// Validation & set
-function handleFile(f) {
-  if (!f) return
-  const okType = f.type?.startsWith('image/') || f.name?.toLowerCase().endsWith('.pdf')
-  if (!okType) { error.value = 'Unsupported file type. Upload a PDF or image.'; return }
-  const max = 50 * 1024 * 1024
-  if (f.size > max) { error.value = 'File too large. Max 50MB.'; return }
-  error.value = ''
-  file.value = f
-  fileName.value = f.name
-}
-
-// Cosmetic progress while waiting
-function startFakeProgress() {
-  progress.value = 12
-  stopFakeProgress()
-  timer = setInterval(() => {
-    if (progress.value < 85) progress.value += Math.random() * 4
-  }, 400)
-}
-function stopFakeProgress() { if (timer) { clearInterval(timer); timer = null } }
-
-onBeforeUnmount(() => {
-  stopFakeProgress()
-  if (controller) controller.abort()
-})
-
-// API call — preserves your original behavior
-async function startScan() {
-  if (!file.value) return
-  loading.value = true
-  error.value = ''
-  modelUrl.value = null
-  suggestions.value = []
-  startFakeProgress()
-
-  // Abort any previous request
-  if (controller) controller.abort()
-  controller = new AbortController()
-
-  const formData = new FormData()
-  formData.append('file', file.value)
-
-  try {
-    const res = await fetch('/api/scan', { method: 'POST', body: formData, signal: controller.signal })
-    if (!res.ok) {
-      const text = await res.text().catch(() => '')
-      console.error('API Error:', res.status, text)
-      throw new Error(`Scan failed with status ${res.status}`)
+export default {
+  name: 'Scan',
+  components: { SceneViewer },
+  data() {
+    return {
+      modelUrl: null,
+      suggestions: [],
+      file: null,
+      fileName: '',
+      error: '',
+      loading: false,
+      progress: 12,
+      isDragOver: false,
+      _progressTimer: null,
+      _controller: null
     }
-    const data = await res.json()
-    if (data?.success) {
-      progress.value = 100
-      modelUrl.value = data.modelPath
-      suggestions.value = Array.isArray(data.suggestions) ? data.suggestions : []
+  },
+  methods: {
+    // UI handlers
+    trigger() {
+      if (this.$refs.fileInput) this.$refs.fileInput.click()
+    },
+    onPickFile(e) {
+      const files = e && e.target && e.target.files ? e.target.files : null
+      this.handleFile(files && files.length ? files[0] : null)
+    },
+    onDragOver() {
+      if (!this.loading) this.isDragOver = true
+    },
+    onDragLeave() {
+      this.isDragOver = false
+    },
+    onDrop(e) {
+      this.isDragOver = false
+      if (this.loading) return
+      const dt = e && e.dataTransfer ? e.dataTransfer : null
+      const f = dt && dt.files && dt.files.length ? dt.files[0] : null
+      this.handleFile(f)
+    },
+    clearFile() {
+      // If currently loading, treat Clear as cancel
+      if (this.loading && this._controller && typeof this._controller.abort === 'function') {
+        try { this._controller.abort() } catch (err) {}
+      }
+      this.file = null
+      this.fileName = ''
+      this.error = ''
+      this.modelUrl = null
+      this.suggestions = []
+    },
 
-      await nextTick()
-      // Smoothly scroll to the viewer
-      viewerSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      console.error('Scan failed (server):', data)
-      throw new Error('Scan failed. Please try another file.')
+    // Validation & set
+    handleFile(f) {
+      if (!f) return
+      const name = f && f.name ? f.name.toLowerCase() : ''
+      const type = f && f.type ? f.type : ''
+      const okType = (type.indexOf('image/') === 0) || name.endsWith('.pdf')
+      if (!okType) { this.error = 'Unsupported file type. Upload a PDF or image.'; return }
+      const max = 50 * 1024 * 1024
+      if (f.size > max) { this.error = 'File too large. Max 50MB.'; return }
+      this.error = ''
+      this.file = f
+      this.fileName = f.name
+    },
+
+    // Cosmetic progress while waiting
+    _startFakeProgress() {
+      this.progress = 12
+      this._stopFakeProgress()
+      this._progressTimer = setInterval(() => {
+        if (this.progress < 85) this.progress += Math.random() * 4
+      }, 400)
+    },
+    _stopFakeProgress() {
+      if (this._progressTimer) {
+        clearInterval(this._progressTimer)
+        this._progressTimer = null
+      }
+    },
+
+    // API call — same backend contract
+    async startScan() {
+      if (!this.file) return
+      this.loading = true
+      this.error = ''
+      this.modelUrl = null
+      this.suggestions = []
+      this._startFakeProgress()
+
+      // Abort any previous request
+      if (this._controller && typeof this._controller.abort === 'function') {
+        try { this._controller.abort() } catch (err) {}
+      }
+      // Create AbortController if available (older browsers may not have it)
+      this._controller = (typeof AbortController !== 'undefined') ? new AbortController() : null
+
+      const formData = new FormData()
+      formData.append('file', this.file)
+
+      try {
+        const fetchOpts = { method: 'POST', body: formData }
+        if (this._controller) fetchOpts.signal = this._controller.signal
+
+        const res = await fetch('/api/scan', fetchOpts)
+        if (!res.ok) {
+          let text = ''
+          try { text = await res.text() } catch (e) {}
+          // eslint-disable-next-line no-console
+          console.error('API Error:', res.status, text)
+          throw new Error('Scan failed with status ' + res.status)
+        }
+        const data = await res.json()
+        if (data && data.success) {
+          this.progress = 100
+          this.modelUrl = data.modelPath
+          this.suggestions = Array.isArray(data.suggestions) ? data.suggestions : []
+          // Smoothly scroll to viewer
+          const el = this.$refs.viewerSection
+          if (el && typeof el.scrollIntoView === 'function') {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Scan failed (server):', data)
+          throw new Error('Scan failed. Please try another file.')
+        }
+      } catch (e) {
+        if (e && e.name === 'AbortError') {
+          this.error = 'Upload canceled.'
+        } else {
+          // eslint-disable-next-line no-console
+          console.error('Upload error:', e)
+          this.error = (e && e.message) ? e.message : 'Upload error. See console for details.'
+        }
+      } finally {
+        this._stopFakeProgress()
+        this.loading = false
+      }
     }
-  } catch (e) {
-    if (e?.name === 'AbortError') {
-      error.value = 'Upload canceled.'
-    } else {
-      console.error('Upload error:', e)
-      error.value = e?.message || 'Upload error. See console for details.'
+  },
+  beforeDestroy() {
+    this._stopFakeProgress()
+    if (this._controller && typeof this._controller.abort === 'function') {
+      try { this._controller.abort() } catch (err) {}
     }
-  } finally {
-    stopFakeProgress()
-    loading.value = false
   }
 }
 </script>
