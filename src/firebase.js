@@ -1,37 +1,53 @@
 // src/firebase.js
-
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider
+} from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAmjrr3NJok1lBtPfncRg73CLEMqF0HP1k",
-  authDomain: "hexanest-c98dd.firebaseapp.com",
-  projectId: "hexanest-c98dd",
-  storageBucket: "hexanest-c98dd.appspot.com",
-  messagingSenderId: "236347193395",
-  appId: "1:236347193395:web:7ac1f6b806ab9eec6bcb46",
-  measurementId: "G-3FDPF67LQC"
+  apiKey: "AIzaSyBY9qaulVALL5YF1pimyObKABZFncIJfQU",
+  authDomain: "hexanest-b2b03.firebaseapp.com",
+  projectId: "hexanest-b2b03",
+  storageBucket: "hexanest-b2b03.firebasestorage.app",
+  messagingSenderId: "588626883380",
+  appId: "1:588626883380:web:3c8527476dcedfe12d6b61",
+  measurementId: "G-NE1ZKYLC9D"
 };
 
-// Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+const app = initializeApp(firebaseConfig);
+export const analytics = getAnalytics(app);
+export const auth = getAuth(app);
 
-// Services
-const auth = getAuth(app);
-const db = getFirestore(app);
+// Email/password register + verification
+export async function registerUser(email, password) {
+  const cred = await createUserWithEmailAndPassword(auth, email, password);
+  await sendEmailVerification(cred.user, {
+    url: window.location.origin + "/verify",
+    handleCodeInApp: false
+  });
+  await signOut(auth); // optional: require verification first
+  return cred;
+}
 
-// Role Checking Logic
-export const checkUserRole = async (user) => {
-  const adminEmail = "adamhaymour@gmail.com";
-  const lifetimeFreeEmail = "rockwellestatehomes@yahoo.ca";
+// Google provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+export async function continueWithGoogle() {
+  const result = await signInWithPopup(auth, googleProvider);
+  return result.user; // Google accounts are already verified by Google
+}
 
-  if (!user) return null;
-  const email = user.email;
-
-  if (email === adminEmail) return 'admin';
-  if (email === lifetimeFreeEmail) return 'free';
-  return 'standard';
-};
-
-export { auth, db };
+// Apple provider (requires Apple setup in Firebase console)
+const appleProvider = new OAuthProvider('apple.com');
+// Optional scopes: appleProvider.addScope('email'); appleProvider.addScope('name');
+export async function continueWithApple() {
+  const result = await signInWithPopup(auth, appleProvider);
+  return result.user; // Apple provides verified identity after sign-in
+}
