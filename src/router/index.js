@@ -1,13 +1,16 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import Vue from 'vue'
+import Router from 'vue-router'
 
-import Home from '@/views/Home.vue';
-import Customization from '@/views/Customization.vue';
-import Scan from '@/views/Scan.vue';
-import Public from '@/views/Public.vue';
-import Explore from '@/views/Explore.vue';
+import Home from '@/views/Home.vue'
+import Customization from '@/views/Customization.vue'
+import Scan from '@/views/Scan.vue'
+import Public from '@/views/Public.vue'
+import Explore from '@/views/Explore.vue'
+import SignUp from '@/views/SignUp.vue'   // 👈 import SignUp
+import Subscribe from '@/views/Subscribe.vue' // optional if you have it
+import Login from '@/views/Login.vue' // optional if you have login page
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   mode: 'history',
@@ -17,5 +20,10 @@ export default new Router({
     { path: '/scan', name: 'Scan', component: Scan },
     { path: '/public', name: 'Public', component: Public },
     { path: '/explore', name: 'Explore', component: Explore },
+
+    // new routes
+    { path: '/signup', name: 'SignUp', component: SignUp },
+    { path: '/subscribe', name: 'Subscribe', component: Subscribe },
+    { path: '/login', name: 'Login', component: Login },
   ]
-});
+})
