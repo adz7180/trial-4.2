@@ -5,8 +5,8 @@ import Customization from '@/views/Customization.vue';
 import Scan from '@/views/Scan.vue';
 import Public from '@/views/Public.vue';
 import Explore from '@/views/Explore.vue';
-import SignUp from '@/views/SignUp.vue';   // <-- add this
-
+import SignUp from '@/views/SignUp.vue';   
+import Login from '@/views/Login.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -17,7 +17,8 @@ export default new Router({
     { path: '/scan', name: 'Scan', component: Scan },
     { path: '/public', name: 'Public', component: Public },
     { path: '/explore', name: 'Explore', component: Explore },
-    { path: '/signup', name: 'SignUp', component: SignUp },       
+    { path: '/signup', name: 'SignUp', component: SignUp }, 
+    { path: '/login', name: 'Login', component: Login },
   ]
 });
 
