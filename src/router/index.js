@@ -6,7 +6,6 @@ import Scan from '@/views/Scan.vue';
 import Public from '@/views/Public.vue';
 import Explore from '@/views/Explore.vue';
 import SignUp from '@/views/SignUp.vue';   // <-- add this
-import Subscribe from '@/views/Subscribe.vue'; // <-- add this if you want plans
 
 Vue.use(Router);
 
@@ -18,8 +17,7 @@ export default new Router({
     { path: '/scan', name: 'Scan', component: Scan },
     { path: '/public', name: 'Public', component: Public },
     { path: '/explore', name: 'Explore', component: Explore },
-    { path: '/signup', name: 'SignUp', component: SignUp },       // ✅ now wired
-    { path: '/subscribe', name: 'Subscribe', component: Subscribe } // optional
+    { path: '/signup', name: 'SignUp', component: SignUp },       
   ]
 });
 
