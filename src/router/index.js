@@ -7,6 +7,8 @@ import Public from '@/views/Public.vue';
 import Explore from '@/views/Explore.vue';
 import SignUp from '@/views/SignUp.vue';   
 import Login from '@/views/Login.vue';
+import PresetHomes from '@/views/PresetHomes.vue';   
+
 Vue.use(Router);
 
 export default new Router({
@@ -19,6 +21,6 @@ export default new Router({
     { path: '/explore', name: 'Explore', component: Explore },
     { path: '/signup', name: 'SignUp', component: SignUp }, 
     { path: '/login', name: 'Login', component: Login },
+    { path: '/presets', name: 'PresetHomes', component: PresetHomes }, 
   ]
 });
-
